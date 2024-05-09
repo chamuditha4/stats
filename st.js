@@ -61,7 +61,7 @@ function resetCounters(uniqueId) {
     localStorage.removeItem(`impressions_${uniqueId}_${wrapper.classList[1]}`);
     localStorage.removeItem(`clicks_${uniqueId}_${wrapper.classList[1]}`);
     wrapper.querySelector(".impressions").textContent = 0;
-    //wrapper.querySelector('.clicks').textContent = 0;
+    wrapper.querySelector('.clicks').textContent = 0;
   });
 
   localStorage.removeItem(`totalClicks_${uniqueId}`);
