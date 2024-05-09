@@ -20,7 +20,9 @@ function incrementImpressions(uniqueId, wrapper) {
     `impressions_${uniqueId}_${wrapper.classList[1]}`,
     impressions
   );
-  wrapper.querySelector(".impressions").textContent = impressions;
+  if (wrapper.getAttribute("data-count-enabled") === "true") {
+    wrapper.querySelector(".impressions").textContent = impressions;
+  }
 }
 
 // Function to increment the clicks counter
@@ -35,7 +37,9 @@ function incrementClicks(uniqueId, wrapper) {
     );
     clicks++;
     localStorage.setItem(`clicks_${uniqueId}_${wrapper.classList[1]}`, clicks);
-    wrapper.querySelector(".clicks").textContent = clicks;
+    if (wrapper.getAttribute("data-count-enabled") === "true") {
+      wrapper.querySelector(".clicks").textContent = clicks;
+    }
 
     totalClicks++;
     localStorage.setItem(`totalClicks_${uniqueId}`, totalClicks);
@@ -60,8 +64,10 @@ function resetCounters(uniqueId) {
   wrappers.forEach((wrapper) => {
     localStorage.removeItem(`impressions_${uniqueId}_${wrapper.classList[1]}`);
     localStorage.removeItem(`clicks_${uniqueId}_${wrapper.classList[1]}`);
-    wrapper.querySelector(".impressions").textContent = 0;
-    wrapper.querySelector('.clicks').textContent = 0;
+    if (wrapper.getAttribute("data-count-enabled") === "true") {
+      wrapper.querySelector(".impressions").textContent = 0;
+      //wrapper.querySelector('.clicks').textContent = 0;
+    }
   });
 
   localStorage.removeItem(`totalClicks_${uniqueId}`);
@@ -108,9 +114,14 @@ wrappers.forEach((wrapper, index) => {
     localStorage.getItem(`clicks_${uniqueId}_${wrapper.classList[1]}`) || 0
   );
 
-  // Update the displayed counts
-  wrapper.querySelector(".impressions").textContent = impressions;
-  wrapper.querySelector(".clicks").textContent = clicks;
+  // Update the displayed counts only for enabled wrappers
+  if (wrapper.getAttribute("data-count-enabled") === "true") {
+    wrapper.querySelector(".impressions").textContent = impressions;
+    wrapper.querySelector(".clicks").textContent = clicks;
+  } else {
+    wrapper.querySelector(".impressions").textContent = "";
+    wrapper.querySelector(".clicks").textContent = "";
+  }
 
   // Attach event listeners
   wrapper.addEventListener("click", () => {
