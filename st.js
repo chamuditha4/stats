@@ -1,6 +1,8 @@
 // Get all the wrapper elements
 const wrappers = document.querySelectorAll('.wrapper');
 
+let totalClickThreshold;
+
 // Function to generate a unique identifier
 function generateUniqueId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -18,7 +20,7 @@ function incrementImpressions(uniqueId, wrapper) {
 }
 
 // Function to increment the clicks counter
-function incrementClicks(uniqueId, wrapper, totalClickThreshold) {
+function incrementClicks(uniqueId, wrapper) {
   let totalClicks = parseInt(localStorage.getItem(`totalClicks_${uniqueId}`) || 0);
 
   if (totalClicks < totalClickThreshold) {
@@ -66,7 +68,9 @@ function enableClicks() {
 }
 
 // Function to initialize the counter
-function initializeCounter(totalClickThreshold) {
+function initializeCounter(threshold) {
+  totalClickThreshold = threshold;
+
   // Get or generate a unique identifier for the visitor
   let uniqueId = localStorage.getItem('uniqueId');
   if (!uniqueId) {
@@ -88,7 +92,7 @@ function initializeCounter(totalClickThreshold) {
 
     // Attach event listeners
     wrapper.addEventListener('click', () => {
-      incrementClicks(uniqueId, wrapper, totalClickThreshold);
+      incrementClicks(uniqueId, wrapper);
     });
 
     // Increment impressions on page load
