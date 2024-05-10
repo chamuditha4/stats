@@ -46,6 +46,7 @@ function incrementClicks(uniqueId, wrapper) {
 
     // Check if the total clicks reach the threshold
     if (totalClicks === getTotalClickThreshold()) {
+      alert(`Total click threshold of ${getTotalClickThreshold()} reached!`);
       hideWrappers();
     }
   }
@@ -60,17 +61,23 @@ function hideWrappers() {
 
 // Function to reset the counters and show the wrappers after a specific time interval
 function resetCounters(uniqueId) {
-  wrappers.forEach((wrapper) => {
-    localStorage.removeItem(`impressions_${uniqueId}_${wrapper.classList[1]}`);
-    localStorage.removeItem(`clicks_${uniqueId}_${wrapper.classList[1]}`);
-    if (wrapper.getAttribute("data-count-enabled") === "true") {
-      wrapper.querySelector(".impressions").textContent = 0;
-      //wrapper.querySelector('.clicks').textContent = 0;
-    }
-  });
+  const resetTime = parseInt(localStorage.getItem("resetTime"));
+  const currentTime = Date.now();
 
-  localStorage.removeItem(`totalClicks_${uniqueId}`);
-  showWrappers();
+  if (currentTime >= resetTime) {
+    wrappers.forEach((wrapper) => {
+      localStorage.removeItem(`impressions_${uniqueId}_${wrapper.classList[1]}`);
+      localStorage.removeItem(`clicks_${uniqueId}_${wrapper.classList[1]}`);
+      if (wrapper.getAttribute("data-count-enabled") === "true") {
+        wrapper.querySelector(".impressions").textContent = 0;
+        //wrapper.querySelector('.clicks').textContent = 0;
+      }
+    });
+
+    localStorage.removeItem(`totalClicks_${uniqueId}`);
+    showWrappers();
+    saveResetTime(); // Save the new reset time
+  }
 }
 
 // Function to show all wrappers
@@ -92,6 +99,13 @@ function getTotalClickThreshold() {
 function getResetInterval() {
   const script = document.querySelector("script[data-reset-interval]");
   return script ? parseInt(script.getAttribute("data-reset-interval")) : 86400;
+}
+
+// Function to save the reset time
+function saveResetTime() {
+  const currentTime = Date.now();
+  const resetTime = currentTime + getResetInterval() * 1000;
+  localStorage.setItem("resetTime", resetTime);
 }
 
 // Get or generate a unique identifier for the visitor
@@ -133,6 +147,11 @@ wrappers.forEach((wrapper, index) => {
   });
 });
 
+// Save the reset time on page load
+window.addEventListener("load", () => {
+  saveResetTime();
+});
+
 // Check if the total clicks have already reached the threshold
 let totalClicks = parseInt(
   localStorage.getItem(`totalClicks_${uniqueId}`) || 0
@@ -141,7 +160,7 @@ if (totalClicks >= getTotalClickThreshold()) {
   hideWrappers();
 }
 
-// Reset the counters and show the wrappers after the specified reset interval
+// Check for reset every second
 setInterval(() => {
   resetCounters(uniqueId);
-}, getResetInterval() * 1000);
+}, 1000);
