@@ -1,3 +1,4 @@
+//updated 11-05
 // Get all the wrapper elements
 const wrappers = document.querySelectorAll(".wrapper");
 
