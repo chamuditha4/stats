@@ -46,7 +46,6 @@ function incrementClicks(uniqueId, wrapper) {
 
     // Check if the total clicks reach the threshold
     if (totalClicks === getTotalClickThreshold()) {
-      alert(`Total click threshold of ${getTotalClickThreshold()} reached!`);
       hideWrappers();
     }
   }
